@@ -19,7 +19,9 @@ function($parse, $compile, editableThemes, $rootScope, $document, editableContro
     return {
       restrict: 'A',
       scope: true,
-      require: [overwrites.directiveName, '?^form'],
+	// FIXME: Changed by Pascal to be able to include editable edlement inside forms without editable-form directive
+	// require: [overwrites.directiveName, '?^form'],
+	require: [overwrites.directiveName, ],
       controller: editableController,
       link: function(scope, elem, attrs, ctrl) {
         // editable controller

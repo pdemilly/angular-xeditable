@@ -1,7 +1,7 @@
 /*!
-angular-xeditable - 0.8.0
+angular-xeditable - 0.8.1
 Edit-in-place for angular.js
-Build date: 2017-06-06 
+Build date: 2017-10-17 
 */
 /**
  * Angular-xeditable module 
@@ -428,12 +428,11 @@ angular.module('xeditable').directive('editableCombodate', ['editableDirectiveFa
           //.replace is so this works in Safari
           self.scope.$data = combodate.getValue() ?
               (new Date(combodate.getValue().replace(/-/g, "/"))).toISOString() : null;
-        });
+        }).change();
       }
     });
   }
 ]);
-
 /*
 Input types: text|password|email|tel|number|url|search|color|date|datetime|datetime-local|time|month|week|file
 */
@@ -489,6 +488,7 @@ Input types: text|password|email|tel|number|url|search|color|date|datetime|datet
             // Add classes to the form
             if (this.attrs.eFormclass) {
               this.editorEl.addClass(this.attrs.eFormclass);
+              this.inputEl.removeAttr('formclass');
             }
           },
           autosubmit: function() {
@@ -636,6 +636,15 @@ angular.module('xeditable').directive('editableTextarea', ['editableDirectiveFac
     return editableDirectiveFactory({
       directiveName: 'editableTextarea',
       inputTpl: '<textarea></textarea>',
+      render: function() {
+          this.parent.render.call(this);
+
+          // Add classes to the form
+          if (this.attrs.eFormclass) {
+              this.editorEl.addClass(this.attrs.eFormclass);
+              this.inputEl.removeAttr('formclass');
+          }
+      },
       addListeners: function() {
         var self = this;
         self.parent.addListeners.call(self);
@@ -1296,7 +1305,9 @@ function($parse, $compile, editableThemes, $rootScope, $document, editableContro
     return {
       restrict: 'A',
       scope: true,
-      require: [overwrites.directiveName, '?^form'],
+	// FIXME: Changed by Pascal to be able to include editable edlement inside forms without editable-form directive
+	// require: [overwrites.directiveName, '?^form'],
+	require: [overwrites.directiveName, ],
       controller: editableController,
       link: function(scope, elem, attrs, ctrl) {
         // editable controller
